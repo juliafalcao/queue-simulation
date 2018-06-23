@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import time
 from math import log, exp
 
@@ -7,58 +6,61 @@ from math import log, exp
 pseudo-random number generators
 """
 
+
 # linear congruential generator
 # n = amount of numbers to return
-def linear_congruential_generator(seed = int(time.time() * 1000), n = 1):
-	x0 = seed
-	a = 1103515245
-	c = 12345
-	M = 34843546
+def linear_congruential_generator(seed=int(time.time() * 1000), n=1):
+    x0 = seed
+    a = 1103515245
+    c = 12345
+    M = 34843546
 
-	random = []
-	last_x = x0
+    random = []
+    last_x = x0
 
-	for i in range(n):
-		x = (a * last_x + c) % M
-		last_x = x
-		U = float(x / M)
-		
-		random.append(U)
+    for i in range(n):
+        x = (a * last_x + c) % M
+        last_x = x
+        U = float(x / M)
 
-	return random
+        random.append(U)
 
-
-def exponential_generator(seed = int(time.time() * 1000), n = 1):
-	x0 = seed
-	a = 1103515245
-	c = 12345
-	M = 34843546
-	lambd = 8
-
-	random = []
-	last_x = x0
-
-	for i in range(n):
-		x = (a * last_x + c) % M
-		last_x = x
-		U = float(x / M)
-		U = (-1 / lambd) * log(U)
-
-		random.append(U)
-
-	return random
+    return random
 
 
-def poisson_generator(lambd = 50, n = 1):
-	for i in range(n):
-		x = 0
-		p = 1
+def exponential_generator(seed=int(time.time() * 1000), n=1):
+    x0 = seed
+    a = 1103515245
+    c = 12345
+    M = 34843546
+    lambd = 8
 
-		while p >= exp(-lambd):
-			i = np.random.random()
-			p = p * i
-			x += 0.01
-		
-		random.append(x)
+    random = []
+    last_x = x0
 
-	return random
+    for i in range(n):
+        x = (a * last_x + c) % M
+        last_x = x
+        U = float(x / M)
+        U = (-1 / lambd) * log(U)
+
+        random.append(U)
+
+    return random
+
+
+def poisson_generator(lambd=50, n=1):
+    for i in range(n):
+        x = 0
+        p = 1
+
+        random = []
+
+        while p >= exp(-lambd):
+            i = np.random.random()
+            p = p * i
+            x += 0.01
+
+        random.append(x)
+
+    return random
