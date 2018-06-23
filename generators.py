@@ -9,7 +9,7 @@ pseudo-random number generators
 
 # linear congruential generator
 # n = amount of numbers to return
-def linear_congruential_generator(seed=int(time.time() * 1000), n=1):
+def linear_congruential_generator(seed=int(time.clock() * pow(10, 20)), n=1):
     x0 = seed
     a = 1103515245
     c = 12345
@@ -28,7 +28,7 @@ def linear_congruential_generator(seed=int(time.time() * 1000), n=1):
     return random
 
 
-def exponential_generator(seed=int(time.time() * 1000), n=1):
+def exponential_generator(seed=int(time.clock() * pow(10, 20)), n=1):
     x0 = seed
     a = 1103515245
     c = 12345
@@ -50,11 +50,11 @@ def exponential_generator(seed=int(time.time() * 1000), n=1):
 
 
 def poisson_generator(lambd=50, n=1):
+    random = []
+
     for i in range(n):
         x = 0
         p = 1
-
-        random = []
 
         while p >= exp(-lambd):
             i = np.random.random()
@@ -64,3 +64,7 @@ def poisson_generator(lambd=50, n=1):
         random.append(x)
 
     return random
+
+
+for i in range(10):
+    print(exponential_generator(time.clock() * pow(10, 20))[0] * 100)
