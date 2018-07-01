@@ -1,17 +1,8 @@
 from generators import *
 
-<<<<<<< HEAD
 # event types
 ARRIVAL = 'A' # client arrives at the restaurant
 DEPARTURE = 'D' # client leaves the restaurant
-=======
-DEBUG = True
-
-# Event types
-ARRIVAL = 'A'  # client arrives at the restaurant
-# ENTRANCE = 'E' # client goes inside / is served
-DEPARTURE = 'D'  # client leaves the restaurant
->>>>>>> a3aa8727845ae910b8b41d081daad15c43c96ed3
 
 # EVENT: (event_type, event_time)
 EVENT_TYPE = 0
@@ -68,25 +59,16 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
             if serving < restaurant_capacity:
                 if DEBUG: print("Client will be served.")
                 serving += 1
-<<<<<<< HEAD
-                entrance_count += 1
-                if (d): print(f"clients inside: {serving}/{restaurant_capacity}")
-=======
                 if DEBUG: print(f"clients inside: {serving}/{restaurant_capacity}")
->>>>>>> a3aa8727845ae910b8b41d081daad15c43c96ed3
                 arrival_times.append(current_time)
                 entrance_times.append(current_time)  # client arrives and is served at the same time
 
-<<<<<<< HEAD
                 service_duration = exponential_generator(time.time() * 1800) # random variable X
-=======
-                # Next departure
-                service_duration = exponential_generator(time.time()) # random variable X
->>>>>>> a3aa8727845ae910b8b41d081daad15c43c96ed3
                 service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key = lambda e: e[EVENT_TIME])
+
             # Restaurant full -> check if client can wait in line
             else:
                 if DEBUG: print("Restaurant is full.")
@@ -110,19 +92,6 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
             serving -= 1
             departure_count += 1
 
-<<<<<<< HEAD
-            if queue_size > 0: # line is not empty -> next client is served
-                if (d): print("First client in line will be served.")
-                queue_size -= 1
-                serving += 1
-                entrance_count += 1
-                if (d): print(f"queue size: {queue_size}/{queue_capacity}")
-                if (d): print(f"clients inside: {serving}/{restaurant_capacity}")
-
-                service_duration = exponential_generator(time.time() * 1800) # random variable X
-                service_durations.append(service_duration)
-                if (d): print(f"service duration: {service_duration}")
-=======
             if DEBUG: print(f"current time: {current_time}")
             if DEBUG: print(f"clients inside: {serving}/{restaurant_capacity}")
             if DEBUG: print(f"departure count: {departure_count}")
@@ -140,23 +109,15 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
                 # Next departure
                 service_duration = exponential_generator(time.time())  # random variable X
                 if DEBUG: print(f"service duration: {service_duration}")
->>>>>>> a3aa8727845ae910b8b41d081daad15c43c96ed3
                 events.append((DEPARTURE, current_time + service_duration))
-                events = sorted(events, key=lambda e: e[EVENT_TIME])
+                events = sorted(events, key = lambda e: e[EVENT_TIME])
                 service_durations.append(service_duration)
 
-<<<<<<< HEAD
-        # add next arrival
-        time_until_next_arrival = exponential_generator(seed = time.time(), lambd = arrival_rate)
-        # random variable C
-        if (d): print(f"time until next arrival: {time_until_next_arrival}")
-=======
         # Next arrival
-        time_until_next_arrival = exponential_generator(seed=time.time(), lambd=arrival_rate)
+        time_until_next_arrival = exponential_generator(seed = time.time(), lambd = arrival_rate)
         if DEBUG: print(f"time until next arrival: {time_until_next_arrival}")
->>>>>>> a3aa8727845ae910b8b41d081daad15c43c96ed3
         events.append((ARRIVAL, current_time + time_until_next_arrival))
-        events = sorted(events, key=lambda e: e[EVENT_TIME])
+        events = sorted(events, key = lambda e: e[EVENT_TIME])
 
     print("\n-- simulation over --\n")
 

@@ -8,7 +8,6 @@ pseudo-random number generators
 ps.: seed is mandatory, pass time.time() when calling functions
 """
 
-
 # linear congruential generator
 # returns one random generated number
 def linear_congruential_generator(seed):
