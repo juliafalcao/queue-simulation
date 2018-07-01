@@ -64,7 +64,3 @@ def poisson_generator(lambd=50, n=1):
         random.append(x)
 
     return random
-
-
-for i in range(10):
-    print(exponential_generator(time.clock() * pow(10, 20))[0] * 100)
