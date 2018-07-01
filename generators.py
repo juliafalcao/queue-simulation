@@ -1,66 +1,42 @@
 import numpy as np
 import time
 from math import log, exp
+import matplotlib.pyplot as plt
 
 """
 pseudo-random number generators
+ps.: seed is mandatory, pass time.time() when calling functions
 """
 
 
 # linear congruential generator
-# n = amount of numbers to return
-def linear_congruential_generator(seed=int(time.clock() * pow(10, 20)), n=1):
+# returns one random generated number
+def linear_congruential_generator(seed):
     x0 = seed
     a = 1103515245
     c = 12345
     M = 34843546
 
-    random = []
-    last_x = x0
+    x = (a * x0 + c) % M
+    U = float(x / M)
 
-    for i in range(n):
-        x = (a * last_x + c) % M
-        last_x = x
-        U = float(x / M)
-
-        random.append(U)
-
-    return random
+    return U
 
 
-def exponential_generator(seed=int(time.clock() * pow(10, 20)), n=1):
-    x0 = seed
-    a = 1103515245
-    c = 12345
-    M = 34843546
-    lambd = 8
+def exponential_generator(seed):
+    U = linear_congruential_generator(seed)
+    U = (-1 / lambd) * log(U)
 
-    random = []
-    last_x = x0
-
-    for i in range(n):
-        x = (a * last_x + c) % M
-        last_x = x
-        U = float(x / M)
-        U = (-1 / lambd) * log(U)
-
-        random.append(U)
-
-    return random
+    return U
 
 
-def poisson_generator(lambd=50, n=1):
-    random = []
+def poisson_generator(seed, lambd = 50):
+    x = 0
+    p = 1
 
-    for i in range(n):
-        x = 0
-        p = 1
+    while p >= exp(-lambd):
+        i = np.random.random()
+        p = p * i
+        x += 0.01
 
-        while p >= exp(-lambd):
-            i = np.random.random()
-            p = p * i
-            x += 0.01
-
-        random.append(x)
-
-    return random
+    return x
