@@ -2,7 +2,6 @@ from generators import *
 
 # event types
 ARRIVAL = 'A' # client arrives at the restaurant
-# ENTRANCE = 'E' # client goes inside / is served
 DEPARTURE = 'D' # client leaves the restaurant
 
 # EVENT: (event_type, event_time)
@@ -17,9 +16,9 @@ restaurant_capacity: how many people can be served at the same time
 queue_capacity: how many people can wait in line at the same time
 arrival_rate: average number of clients that arrive per time unit (lambda)
 """
-def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_rate = 0.5):
+def restaurant_simulator(arrival_rate = 0.1, restaurant_capacity = 30, queue_capacity = 15):
     current_time = 0
-    max_time = 20 # simulation end condition
+    max_time = 100 # simulation end condition
     events = [] # list of (event_type, event_time) tuples, sorted by event time
     serving = 0 # amount of people currently being served (serving <= restaurant_capacity)
     queue_size = 0 # amount of people currently waiting in line (queue_size <= queue_capacity)
@@ -28,11 +27,12 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
     arrival_count = 0 # clients who arrived
     entrance_count = 0 # clients who entered and were served
     departure_count = 0 # clients who were served and left
-    drop_count = 0 # clients who left due to queue being full
+    drop_count = 0 # clients who gave up because queue was full
 
     arrival_times = []
     entrance_times = []
-    departure_times = []
+    # arrival_times[i] and entrance_times[i] refer to the same event
+    departure_times = [] # useless?
     service_durations = []
 
     # Bootstrap
@@ -54,11 +54,12 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
             if serving < restaurant_capacity: # restaurant not full -> client is served
                 if (d): print("Client will be served.")
                 serving += 1
+                entrance_count += 1
                 if (d): print(f"clients inside: {serving}/{restaurant_capacity}")
                 arrival_times.append(current_time)
                 entrance_times.append(current_time) # client arrives and is served at the same time
 
-                service_duration = exponential_generator(time.time()) # random variable X
+                service_duration = exponential_generator(time.time() * 1800) # random variable X
                 service_durations.append(service_duration)
                 if (d): print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
@@ -88,13 +89,14 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
             if (d): print(f"departure count: {departure_count}")
 
             if queue_size > 0: # line is not empty -> next client is served
-                print("First client in line will be served.")
+                if (d): print("First client in line will be served.")
                 queue_size -= 1
                 serving += 1
-                print(f"queue size: {queue_size}/{queue_capacity}")
+                entrance_count += 1
+                if (d): print(f"queue size: {queue_size}/{queue_capacity}")
                 if (d): print(f"clients inside: {serving}/{restaurant_capacity}")
 
-                service_duration = exponential_generator(time.time()) # random variable X
+                service_duration = exponential_generator(time.time() * 1800) # random variable X
                 service_durations.append(service_duration)
                 if (d): print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
@@ -102,6 +104,7 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
 
         # add next arrival
         time_until_next_arrival = exponential_generator(seed = time.time(), lambd = arrival_rate)
+        # random variable C
         if (d): print(f"time until next arrival: {time_until_next_arrival}")
         events.append((ARRIVAL, current_time + time_until_next_arrival))
         events = sorted(events, key = lambda e: e[EVENT_TIME])
@@ -126,6 +129,7 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
 
     print("\nMEASURES:")
     print(f"arrival count: {arrival_count}")
+    print(f"entrance count: {entrance_count}")
     print(f"departure count: {departure_count}")
     print(f"drop rate: {drop_rate}")
     print(f"average waiting time: {avg_waiting_time}")
