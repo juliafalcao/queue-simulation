@@ -23,7 +23,7 @@ def linear_congruential_generator(seed):
     return U
 
 
-def exponential_generator(seed, lambd = 8):
+def exponential_generator(seed, lambd=8):
     U = linear_congruential_generator(seed)
     U = (-1 / lambd) * log(U)
 
@@ -31,7 +31,7 @@ def exponential_generator(seed, lambd = 8):
 
 
 
-def poisson_generator(seed, lambd = 50):
+def poisson_generator(seed, lambd=50):
     x = 0
     p = 1
 
