@@ -2,7 +2,7 @@ from generators import *
 
 DEBUG = True
 
-#  Event types
+# Event types
 ARRIVAL = 'A'  # client arrives at the restaurant
 # ENTRANCE = 'E' # client goes inside / is served
 DEPARTURE = 'D'  # client leaves the restaurant
@@ -21,15 +21,15 @@ arrival_rate: average number of clients that arrive per time unit (lambda)
 
 def restaurant_simulator(restaurant_capacity=30, queue_capacity=15, arrival_rate=0.2):
     current_time = 0
-    max_time = 1  # Simulation end condition
-    events = []  # List of (event_type, event_time) tuples, sorted by event time
-    serving = 0  # Amount of people currently being served (serving <= restaurant_capacity)
-    queue_size = 0  # Amount of people currently waiting in line (queue_size <= queue_capacity)
+    max_time = 1  # simulation end condition
+    events = []  # list of (event_type, event_time) tuples, sorted by event time
+    serving = 0  # amount of people currently being served (serving <= restaurant_capacity)
+    queue_size = 0  # amount of people currently waiting in line (queue_size <= queue_capacity)
 
-    # interest measures
+    # Interest measures
     arrival_count = 0
     departure_count = 0
-    drop_count = 0  # Amount of events dropped due to queue being full
+    drop_count = 0  # amount of events dropped due to queue being full
 
     arrival_times = []
     entrance_times = []
@@ -80,13 +80,13 @@ def restaurant_simulator(restaurant_capacity=30, queue_capacity=15, arrival_rate
                 queue_size -= 1
                 serving += 1
 
+                # Next departure
                 service_duration = exponential_generator(time.time())  # Random variable X
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key=lambda e: e[EVENT_TIME])
 
         # Add next arrival
         time_until_next_arrival = exponential_generator(time.time(), lambd=arrival_rate)
-        if DEBUG: print(time_until_next_arrival)
         events.append((ARRIVAL, current_time + time_until_next_arrival))
         events = sorted(events, key=lambda e: e[EVENT_TIME])
 
