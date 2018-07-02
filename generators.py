@@ -10,12 +10,9 @@ ps.: seed is mandatory, pass time.time() when calling functions
 
 # linear congruential generator
 # returns one random generated number
-def linear_congruential_generator(seed):
+def linear_congruential_generator(seed, a = 1103515245, c = 12345, M = 34843546):
     x0 = seed
-    a = 1103515245
-    c = 12345
-    M = 34843546
-
+    
     x = (a * x0 + c) % M
     U = float(x / M)
 
@@ -24,7 +21,8 @@ def linear_congruential_generator(seed):
 def exponential_generator(seed, lambd = 8):
 
     U = linear_congruential_generator(seed)
-    U = (-1 / lambd) * log(U)
+    # U = (-1 / lambd) * log(U)
+    U = log(1-U) / (-lambd)
 
     return U
 
