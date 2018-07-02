@@ -21,11 +21,9 @@ def linear_congruential_generator(seed, a = 1103515245, c = 12345, M = 34843546)
 def exponential_generator(seed, lambd = 8):
 
     U = linear_congruential_generator(seed)
-    # U = (-1 / lambd) * log(U)
-    U = log(1-U) / (-lambd)
+    U = (-1 / lambd) * log(U)
 
     return U
-
 
 def poisson_generator(seed, lambd = 50):
     x = 0
