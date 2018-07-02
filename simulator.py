@@ -17,9 +17,9 @@ queue_capacity: how many people can wait in line at the same time
 arrival_rate: average number of clients that arrive per time unit (lambda)
 """
 
-def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_rate = 0.5):
+def restaurant_simulator(arrival_rate, service_rate, restaurant_capacity = 30, queue_capacity = 15):
     current_time = 0
-    max_time = 20  # simulation end condition
+    max_time = 360  # simulation end condition -> duration: 60 minutes (in ms)
     events = []  # list of (event_type, event_time) tuples, sorted by event time
     serving = 0  # amount of people currently being served (serving <= restaurant_capacity)
     queue_size = 0  # amount of people currently waiting in line (queue_size <= queue_capacity)
@@ -40,10 +40,7 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
     events.append((ARRIVAL, current_time))
 
     # Simulator loop
-    # while len(events) > 0 and current_time < max_time:
-    while len(events) > 0 and arrival_count < 1000:
-        if DEBUG: print(events)
-
+    while len(events) > 0 and current_time < max_time:
         current_state = events.pop(0)
 
         # Process arrival
@@ -55,29 +52,30 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
             if DEBUG: print(f"current time: {current_time}")
             if DEBUG: print(f"arrival count: {arrival_count}")
 
-            # Restaurant not full -> client is served
-            if serving < restaurant_capacity:
+            if serving < restaurant_capacity: # Restaurant not full -> client is served
                 if DEBUG: print("Client will be served.")
                 serving += 1
+                entrance_count += 1
                 if DEBUG: print(f"clients inside: {serving}/{restaurant_capacity}")
+                if DEBUG: print(f"entrance count: {entrance_count}")
                 arrival_times.append(current_time)
                 entrance_times.append(current_time)  # client arrives and is served at the same time
 
-                service_duration = exponential_generator(time.time() * 1800) # random variable X
+                service_duration = exponential_generator(time.time(), lambd = service_rate) # random variable X
                 service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key = lambda e: e[EVENT_TIME])
 
-            # Restaurant full -> check if client can wait in line
-            else:
+            else: # Restaurant full -> check if client can wait in line
                 if DEBUG: print("Restaurant is full.")
-                # Queue not full -> client joins line
-                if queue_size < queue_capacity:
+                
+                if queue_size < queue_capacity: # Queue not full -> client joins line
                     if DEBUG: print("Client gets in line.")
                     queue_size += 1
                     if DEBUG: print(f"queue size: {queue_size}/{queue_capacity}")
                     arrival_times.append(current_time)
+                
                 # Queue full -> client leaves
                 else:
                     if DEBUG: print("Line is full. Client leaves.")
@@ -107,12 +105,13 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
                 if DEBUG: print(f"clients inside: {serving}/{restaurant_capacity}")
 
                 # Next departure
-                service_duration = exponential_generator(time.time())  # random variable X
+                service_duration = exponential_generator(seed = time.time(), lambd = service_rate)  # random variable X
+                service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key = lambda e: e[EVENT_TIME])
-                service_durations.append(service_duration)
-
+    
+    
         # Next arrival
         time_until_next_arrival = exponential_generator(seed = time.time(), lambd = arrival_rate)
         if DEBUG: print(f"time until next arrival: {time_until_next_arrival}")
@@ -141,13 +140,13 @@ def restaurant_simulator(restaurant_capacity = 30, queue_capacity = 15, arrival_
     print(f"arrival count: {arrival_count}")
     print(f"entrance count: {entrance_count}")
     print(f"departure count: {departure_count}")
+    print(f"drop count: {drop_count}")
     print(f"drop rate: {drop_rate}")
     print(f"average waiting time: {avg_waiting_time}")
     print(f"average service time: {avg_service_time}")
 
-    if DEBUG: print(f"drops: {drop_count}")
-    if DEBUG: print(f"serving: {serving}")
-    if DEBUG: print(f"queue size: {queue_size}")
 
+Ex = 90 # ms -- esperança do tempo para servir uma requisição
+Ec = 110 # ms -- esperança do tempo entre chegadas
 
-restaurant_simulator()
+restaurant_simulator(arrival_rate = 1/Ec, service_rate = 1/Ex, restaurant_capacity = 50)
