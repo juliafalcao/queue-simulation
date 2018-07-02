@@ -8,7 +8,7 @@ DEPARTURE = 'D' # client leaves the restaurant
 EVENT_TYPE = 0
 EVENT_TIME = 1
 
-DEBUG = True  # debug prints
+DEBUG = False  # debug prints
 
 """
 Main simulator function.
@@ -42,7 +42,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
     # Simulator loop
     while current_time < simulation_time:
         current_state = events.pop(0)
-
+        
         # Process arrival
         if current_state[EVENT_TYPE] == ARRIVAL:
             current_time = current_state[EVENT_TIME]
@@ -55,13 +55,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
             if queue_size < queue_capacity: # Queue not full -> client waits in line
                 arrival_times.append(current_time)
                 queue_size += 1
-
-                if DEBUG: print("Add departure.")
-                service_duration = exponential_generator(seed = time.time(), lambd = service_rate) # X
-                service_durations.append(current_time)
-                if DEBUG: print(f"service duration: {service_duration}")
-                events.append((DEPARTURE, current_time + service_duration))
-                events = sorted(events, key = lambda e: e[EVENT_TIME])
+                if DEBUG: print(f"queue size: {queue_size}")
 
             else: # Queue full -> client leaves
                 if DEBUG: print("Line is full. Client leaves.")
@@ -74,6 +68,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
             if DEBUG: print(f"time until next arrival: {time_until_next_arrival}")
             events.append((ARRIVAL, current_time + time_until_next_arrival))
             events = sorted(events, key = lambda e: e[EVENT_TIME])
+            
 
             if queue_size == 1: # Queue was empty
                 if DEBUG: print("Add next departure.")
@@ -90,6 +85,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
 
             current_time = current_state[EVENT_TIME]
             departure_count += 1
+            queue_size -= 1
 
             if DEBUG: print(f"current time: {current_time}")
             if DEBUG: print(f"departure count: {departure_count}")
@@ -100,8 +96,9 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key = lambda e: e[EVENT_TIME])
+                
+        if DEBUG: print()
     
-
 
     print("\n-- simulation over --\n")
 
@@ -127,10 +124,10 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
     print(f"drop count: {drop_count}")
     print(f"drop rate: {drop_rate}")
     # print(f"average waiting time: {avg_waiting_time}")
-    print(f"average service time: {avg_service_time}")
+    # print(f"average service time: {avg_service_time}")
 
 
-Ec = 110 # ms -- esperança do tempo entre chegadas
-Ex = 90 # ms -- esperança do tempo para servir uma requisição
+Ec = 0.085 # s -- esperança do tempo entre chegadas
+Ex = 0.090 # s -- esperança do tempo para servir uma requisição
 
-restaurant_simulator(simulation_time = 600, arrival_rate = float(1/Ec), service_rate = float(1/Ex))
+restaurant_simulator(simulation_time = 3600, arrival_rate = float(1/Ec), service_rate = float(1/Ex))
