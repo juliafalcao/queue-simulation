@@ -1,8 +1,10 @@
+import random
+
 from generators import *
 
 # event types
-ARRIVAL = 'A' # client arrives at the restaurant
-DEPARTURE = 'D' # client leaves the restaurant
+ARRIVAL = 'A'  # client arrives at the restaurant
+DEPARTURE = 'D'  # client leaves the restaurant
 
 # EVENT: (event_type, event_time)
 EVENT_TYPE = 0
@@ -13,17 +15,15 @@ DEBUG = False  # debug prints
 """
 Main simulator function.
 restaurant_capacity: how many people can be served at the same time
-queue_capacity: how many people can wait in line at the same time
+queue_capacity: how many people can wait in queue at the same time
 arrival_rate: average number of clients that arrive per time unit (lambda)
 """
 
-def restaurant_simulator(simulation_time, arrival_rate, service_rate):
+
+def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capacity=15):
     current_time = 0
     events = []  # list of (event_type, event_time) tuples, sorted by event time
-    # serving = 0  # amount of people currently being served (serving <= restaurant_capacity)
-    restaurant_capacity = 30
-    queue_size = 0  # amount of people currently waiting in line (queue_size <= queue_capacity)
-    queue_capacity = 15
+    queue_size = 0  # amount of people currently waiting in queue (queue_size <= queue_capacity)
 
     # interest measures
     arrival_count = 0  # clients who arrived
@@ -31,10 +31,10 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
     drop_count = 0  # clients who left due to queue being full
 
     arrival_times = []
-    entrance_times = []
-    # arrival_times[i] and entrance_times[i] refer to the same event
-    departure_times = [] # useless?
+    departure_times = []
     service_durations = []
+
+    queue_sizes = []
 
     # Bootstrap
     events.append((ARRIVAL, current_time))
@@ -51,33 +51,35 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
             if DEBUG: print(f"A client arrives.")
             if DEBUG: print(f"current time: {current_time}")
             if DEBUG: print(f"arrival count: {arrival_count}")
-            
-            if queue_size < queue_capacity: # Queue not full -> client waits in line
+
+            # Queue not full -> client waits in queue
+            if queue_size < queue_capacity:
+                if DEBUG: print("Queue is not full. Client waits")
                 arrival_times.append(current_time)
                 queue_size += 1
                 if DEBUG: print(f"queue size: {queue_size}")
-
-            else: # Queue full -> client leaves
-                if DEBUG: print("Line is full. Client leaves.")
+            # Queue full -> client leaves
+            else:
+                if DEBUG: print("Queue is full. Client leaves.")
                 drop_count += 1
                 if DEBUG: print(f"drop count: {drop_count}")
 
             # Next arrival
             if DEBUG: print("Add next arrival.")
-            time_until_next_arrival = exponential_generator(seed = time.time(), lambd = arrival_rate) # X
+            time_until_next_arrival = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=arrival_rate)  # X
             if DEBUG: print(f"time until next arrival: {time_until_next_arrival}")
             events.append((ARRIVAL, current_time + time_until_next_arrival))
             events = sorted(events, key = lambda e: e[EVENT_TIME])
-            
 
-            if queue_size == 1: # Queue was empty
+            # Queue was empty
+            if queue_size == 1:
+                # Next departure
                 if DEBUG: print("Add next departure.")
-                service_duration = exponential_generator(seed = time.time(), lambd = service_rate) # X
+                service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
                 service_durations.append(current_time)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
-                events = sorted(events, key = lambda e: e[EVENT_TIME])
-
+                events = sorted(events, key=lambda e: e[EVENT_TIME])
 
         # Process departure
         elif current_state[EVENT_TYPE] == DEPARTURE:
@@ -86,48 +88,57 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
             current_time = current_state[EVENT_TIME]
             departure_count += 1
             queue_size -= 1
+            departure_times.append(current_time)
 
             if DEBUG: print(f"current time: {current_time}")
             if DEBUG: print(f"departure count: {departure_count}")
 
-            if (queue_size > 0): # Queue is not empty -> add next departure
-                service_duration = exponential_generator(seed = time.time(), lambd = service_rate) # X
+            # Queue is not empty -> add next departure
+            if queue_size > 0:
+                # Next departure
+                service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
                 service_durations.append(current_time)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
-                events = sorted(events, key = lambda e: e[EVENT_TIME])
-                
+                events = sorted(events, key=lambda e: e[EVENT_TIME])
+
+        queue_sizes.append(queue_size)
+
         if DEBUG: print()
-    
 
-    print("\n-- simulation over --\n")
+    print("\n-- Simulation is Over --\n")
 
-    print("FINAL STATE:")
-    print(f"line: {queue_size}/{queue_capacity}")
+    print("Final State:")
+    print(f"Queue: {queue_size}/{queue_capacity}")
 
-    #  Measures
+    # Interest Measures
+
+    # Utilization
+    utilization = 0
+
+    # Queue average length
+    queue_average = sum(queue_sizes)/float(len(queue_sizes))
+
+    # Requisition average time
+    requisition_average = sum(service_durations)/simulation_time
+
+    # Drop rate
     drop_rate = drop_count / arrival_count
 
-    """
-    acc = 0
-    for i in range(len(entrance_times)):
-        waiting_time = entrance_times[i] - arrival_times[i]
-        acc += waiting_time
+    print("\nInterest Measures:")
+    print(f"Arrival count: {arrival_count}")
+    print(f"Departure count: {departure_count}")
+    print(f"Drop count: {drop_count}")
+    print(f"Drop rate: {drop_rate*100}%")
+    print(f"Queue average length: {sum(queue_sizes)/float(len(queue_sizes))}")
+    print(f"Average waiting time: {avg_waiting_time}")
+    print(f"Average service time: {avg_service_time}")
 
-    avg_waiting_time = acc / len(entrance_times)
-    """
-    avg_service_time = sum(service_durations) / float(len(service_durations))
-
-    print("\nMEASURES:")
-    print(f"arrival count: {arrival_count}")
-    print(f"departure count: {departure_count}")
-    print(f"drop count: {drop_count}")
-    print(f"drop rate: {drop_rate}")
-    # print(f"average waiting time: {avg_waiting_time}")
-    # print(f"average service time: {avg_service_time}")
+    return {"utilization": utilization, "queue_average": queue_average,
+            "requisition_average": queue_average, "drop_rate": drop_rate}
 
 
-Ec = 0.085 # s -- esperança do tempo entre chegadas
-Ex = 0.090 # s -- esperança do tempo para servir uma requisição
+Ec = 0.110  # s -- esperança do tempo entre chegadas
+Ex = 0.090  # s -- esperança do tempo para servir uma requisição
 
-restaurant_simulator(simulation_time = 3600, arrival_rate = float(1/Ec), service_rate = float(1/Ex))
+restaurant_simulator(simulation_time=3600, arrival_rate=float(1/Ec), service_rate=float(1/Ex))
