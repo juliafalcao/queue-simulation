@@ -135,7 +135,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     print(f"Average service time: {avg_service_time}")
 
     return {"utilization": utilization, "queue_average": queue_average,
-            "requisition_average": queue_average, "drop_rate": drop_rate}
+            "requisition_average": requisition_average, "drop_rate": drop_rate}
 
 
 Ec = 0.110  # s -- esperança do tempo entre chegadas
