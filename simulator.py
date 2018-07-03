@@ -69,14 +69,14 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
             time_until_next_arrival = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=arrival_rate)  # X
             if DEBUG: print(f"time until next arrival: {time_until_next_arrival}")
             events.append((ARRIVAL, current_time + time_until_next_arrival))
-            events = sorted(events, key = lambda e: e[EVENT_TIME])
+            events = sorted(events, key=lambda e: e[EVENT_TIME])
 
             # Queue was empty
             if queue_size == 1:
                 # Next departure
                 if DEBUG: print("Add next departure.")
                 service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
-                service_durations.append(current_time)
+                service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key=lambda e: e[EVENT_TIME])
@@ -97,7 +97,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
             if queue_size > 0:
                 # Next departure
                 service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
-                service_durations.append(current_time)
+                service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key=lambda e: e[EVENT_TIME])
@@ -114,10 +114,8 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     # Interest Measures
 
     # Utilization
-    aux = 0
-    for i in range(len(departure_times)):
-        aux += departure_times[i] - arrival_times[i]
-    utilization = aux / len(departure_times)
+    print(service_durations)
+    utilization = sum(service_durations) / simulation_time
 
     # Queue average length
     queue_average = sum(queue_sizes)/float(len(queue_sizes))
