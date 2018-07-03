@@ -120,7 +120,11 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     avg_queue_size = sum(queue_sizes) / float(len(queue_sizes))
 
     # Average requisition time
-    avg_requisition_time = sum(service_durations) / simulation_time
+    requisition_times = []
+    for i in range(len(departure_times)):
+        requisition_times.append(departure_times[i] - arrival_times[i])
+        
+    avg_requisition_time = sum(requisition_times) / float(len(requisition_times))
 
     # Drop rate
     drop_rate = drop_count / arrival_count
@@ -139,4 +143,4 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
 Ec = 0.110  # s -- esperança do tempo entre chegadas
 Ex = 0.090  # s -- esperança do tempo para servir uma requisição
 
-restaurant_simulator(simulation_time = 3600, arrival_rate = float(1/Ec), service_rate = float(1/Ex))
+print(restaurant_simulator(simulation_time = 3600, arrival_rate = float(1/Ec), service_rate = float(1/Ex)))
