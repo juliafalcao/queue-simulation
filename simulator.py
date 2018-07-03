@@ -125,18 +125,27 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     # Drop rate
     drop_rate = drop_count / arrival_count
 
-    if (DEBUG): print("\nInterest Measures:")
-    if (DEBUG): print(f"Arrival count: {arrival_count}")
-    if (DEBUG): print(f"Departure count: {departure_count}")
-    if (DEBUG): print(f"Drop count: {drop_count}")
-    if (DEBUG): print(f"Drop rate: {drop_rate * 100}%")
-    if (DEBUG): print(f"Average queue size: {sum(queue_sizes)/float(len(queue_sizes))}")
+    print("\nINTEREST MEASURES")
+    print(f"Arrival count: {arrival_count}")
+    print(f"Departure count: {departure_count}")
+    print(f"Drop count: {drop_count}")
+    print()
+    print(f"Utilization: {utilization}")
+    print(f"Queue average length: {avg_queue_size}")
+    print(f"Requisition average: {avg_requisition_time}")
+    print(f"Drop rate: {drop_rate*100}%")
 
     return {"utilization": utilization, "avg_queue_size": avg_queue_size,
             "avg_requisition_time": avg_requisition_time, "drop_rate": drop_rate}
 
+'''
+lim = min(len(s), len(c))
+w = np.asarray(s[:lim]) - np.asarray(c[:lim])
+lnfila = np.asarray(lnfila)
+return w.mean()
+'''
 
-Ec = 0.110  # s -- esperança do tempo entre chegadas
-Ex = 0.090  # s -- esperança do tempo para servir uma requisição
+Ec = 0.110
+Ex = 0.090
 
-restaurant_simulator(simulation_time = 3600, arrival_rate = float(1/Ec), service_rate = float(1/Ex))
+restaurant_simulator(simulation_time=3600, arrival_rate=float(1/Ec), service_rate=float(1/Ex))
