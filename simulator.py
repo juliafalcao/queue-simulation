@@ -106,36 +106,34 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
 
         if DEBUG: print()
 
-    print("\n-- Simulation is Over --\n")
+    if DEBUG: print("\n-- Simulation is over --\n")
 
-    print("Final State:")
-    print(f"Queue: {queue_size}/{queue_capacity}")
+    if DEBUG: print("Final State:")
+    if DEBUG: print(f"Queue: {queue_size}/{queue_capacity}")
 
     # Interest Measures
 
     # Utilization
     utilization = 0
 
-    # Queue average length
-    queue_average = sum(queue_sizes)/float(len(queue_sizes))
+    # Average queue size
+    avg_queue_size = sum(queue_sizes) / float(len(queue_sizes))
 
-    # Requisition average time
-    requisition_average = sum(service_durations)/simulation_time
+    # Average requisition time
+    avg_requisition_time = sum(service_durations) / simulation_time
 
     # Drop rate
     drop_rate = drop_count / arrival_count
 
-    print("\nInterest Measures:")
-    print(f"Arrival count: {arrival_count}")
-    print(f"Departure count: {departure_count}")
-    print(f"Drop count: {drop_count}")
-    print(f"Drop rate: {drop_rate*100}%")
-    print(f"Queue average length: {sum(queue_sizes)/float(len(queue_sizes))}")
-    print(f"Average waiting time: {avg_waiting_time}")
-    print(f"Average service time: {avg_service_time}")
+    if (DEBUG): print("\nInterest Measures:")
+    if (DEBUG): print(f"Arrival count: {arrival_count}")
+    if (DEBUG): print(f"Departure count: {departure_count}")
+    if (DEBUG): print(f"Drop count: {drop_count}")
+    if (DEBUG): print(f"Drop rate: {drop_rate * 100}%")
+    if (DEBUG): print(f"Average queue length: {sum(queue_sizes)/float(len(queue_sizes))}")
 
-    return {"utilization": utilization, "queue_average": queue_average,
-            "requisition_average": requisition_average, "drop_rate": drop_rate}
+    return {"utilization": utilization, "avg_queue_size": avg_queue_size,
+            "avg_requisition_time": avg_requisition_time, "drop_rate": drop_rate}
 
 
 Ec = 0.110  # s -- esperança do tempo entre chegadas

@@ -1,7 +1,6 @@
 import numpy as np
 import time
 from math import log, exp
-import matplotlib.pyplot as plt
 
 """
 pseudo-random number generators
