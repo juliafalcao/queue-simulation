@@ -127,7 +127,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate):
     # print(f"average service time: {avg_service_time}")
 
 
-Ec = 0.085 # s -- esperança do tempo entre chegadas
+Ec = 0.110 # s -- esperança do tempo entre chegadas
 Ex = 0.090 # s -- esperança do tempo para servir uma requisição
 
 restaurant_simulator(simulation_time = 3600, arrival_rate = float(1/Ec), service_rate = float(1/Ex))
