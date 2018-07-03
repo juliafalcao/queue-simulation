@@ -2,7 +2,7 @@ from generators import *
 from simulator import *
 import matplotlib.pyplot as plt
 
-Ec_variations = [0.200, 0.180, 0.160, 0.140, 0.120, 0.110, 0.100] # seconds
+Ec_variations = [0.10, 0.12, 0.14, 0.16, 0.18, 0.20] # seconds
 Ex = 0.09 # seconds
 
 utilizations = []
@@ -17,9 +17,25 @@ for Ec in Ec_variations:
     avg_queue_sizes.append(measures["avg_queue_size"])
     avg_requisition_times.append(measures["avg_requisition_time"])
 
-print(drop_rates)
-
 x_values = [1/Ec for Ec in Ec_variations]
-xticks = ["1/" + str(Ec) for Ec in Ec_variations]
-plt.plot(Ec_variations, drop_rates, linewidth = 2, color = "darkviolet")
-plt.show()
+plt.plot(x_values, drop_rates, linewidth = 2, color = "darkviolet")
+# plt.xticks(x_values, ["1/" + str(Ec) for Ec in Ec_variations])
+plt.xlabel("Taxas de chegada (1/E[C])")
+plt.ylabel("Taxa de descarte")
+plt.title("Taxas de descarte")
+plt.savefig("taxas_descarte.png")
+plt.clf()
+
+plt.plot(x_values, utilizations, linewidth = 2, color = "darkviolet")
+plt.xlabel("Taxas de chegada (1/E[C])")
+plt.ylabel("Utilização")
+plt.title("Utilizações")
+plt.savefig("utilizacao.png")
+plt.clf()
+
+plt.plot(x_values, avg_requisition_times, linewidth = 2, color = "darkviolet")
+plt.xlabel("Taxas de chegada (1/E[C])")
+plt.ylabel("Tempo médio")
+plt.title("Tempo médio que as requisições permanecem no sistema")
+plt.savefig("tempo_medio_espera.png")
+plt.clf()
