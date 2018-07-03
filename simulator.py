@@ -114,7 +114,10 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     # Interest Measures
 
     # Utilization
-    utilization = 0
+    aux = 0
+    for i in range(len(departure_times)):
+        aux += departure_times[i] - arrival_times[i]
+    utilization = aux / len(departure_times)
 
     # Queue average length
     queue_average = sum(queue_sizes)/float(len(queue_sizes))
@@ -125,17 +128,18 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     # Drop rate
     drop_rate = drop_count / arrival_count
 
-    print("\nInterest Measures:")
+    print("\nINTEREST MEASURES")
     print(f"Arrival count: {arrival_count}")
     print(f"Departure count: {departure_count}")
     print(f"Drop count: {drop_count}")
+    print()
+    print(f"Utilization: {utilization}")
+    print(f"Queue average length: {queue_average}")
+    print(f"Requisition average: {requisition_average}")
     print(f"Drop rate: {drop_rate*100}%")
-    print(f"Queue average length: {sum(queue_sizes)/float(len(queue_sizes))}")
-    print(f"Average waiting time: {avg_waiting_time}")
-    print(f"Average service time: {avg_service_time}")
 
     return {"utilization": utilization, "queue_average": queue_average,
-            "requisition_average": queue_average, "drop_rate": drop_rate}
+            "requisition_average": requisition_average, "drop_rate": drop_rate}
 
 
 Ec = 0.110  # s -- esperança do tempo entre chegadas
