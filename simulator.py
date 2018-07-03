@@ -69,14 +69,14 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
             time_until_next_arrival = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=arrival_rate)  # X
             if DEBUG: print(f"time until next arrival: {time_until_next_arrival}")
             events.append((ARRIVAL, current_time + time_until_next_arrival))
-            events = sorted(events, key = lambda e: e[EVENT_TIME])
+            events = sorted(events, key=lambda e: e[EVENT_TIME])
 
             # Queue was empty
             if queue_size == 1:
                 # Next departure
                 if DEBUG: print("Add next departure.")
                 service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
-                service_durations.append(current_time)
+                service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key=lambda e: e[EVENT_TIME])
@@ -97,7 +97,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
             if queue_size > 0:
                 # Next departure
                 service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
-                service_durations.append(current_time)
+                service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
                 events = sorted(events, key=lambda e: e[EVENT_TIME])
@@ -114,7 +114,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     # Interest Measures
 
     # Utilization
-    utilization = 0
+    utilization = sum(service_durations) / simulation_time
 
     # Average queue size
     avg_queue_size = sum(queue_sizes) / float(len(queue_sizes))
@@ -130,7 +130,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     if (DEBUG): print(f"Departure count: {departure_count}")
     if (DEBUG): print(f"Drop count: {drop_count}")
     if (DEBUG): print(f"Drop rate: {drop_rate * 100}%")
-    if (DEBUG): print(f"Average queue length: {sum(queue_sizes)/float(len(queue_sizes))}")
+    if (DEBUG): print(f"Average queue size: {sum(queue_sizes)/float(len(queue_sizes))}")
 
     return {"utilization": utilization, "avg_queue_size": avg_queue_size,
             "avg_requisition_time": avg_requisition_time, "drop_rate": drop_rate}
@@ -139,4 +139,4 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
 Ec = 0.110  # s -- esperança do tempo entre chegadas
 Ex = 0.090  # s -- esperança do tempo para servir uma requisição
 
-restaurant_simulator(simulation_time=3600, arrival_rate=float(1/Ec), service_rate=float(1/Ex))
+restaurant_simulator(simulation_time = 3600, arrival_rate = float(1/Ec), service_rate = float(1/Ex))
