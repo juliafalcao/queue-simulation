@@ -20,7 +20,7 @@ arrival_rate: average number of clients that arrive per time unit (lambda)
 """
 
 
-def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capacity=15):
+def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capacity = 15):
     current_time = 0
     events = []  # list of (event_type, event_time) tuples, sorted by event time
     queue_size = 0  # amount of people currently waiting in queue (queue_size <= queue_capacity)
@@ -66,7 +66,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
 
             # Next arrival
             if DEBUG: print("Add next arrival.")
-            time_until_next_arrival = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=arrival_rate)  # X
+            time_until_next_arrival = exponential_generator(seed = random.randint(0, 9999999999999999999999), lambd = arrival_rate)  # X
             if DEBUG: print(f"time until next arrival: {time_until_next_arrival}")
             events.append((ARRIVAL, current_time + time_until_next_arrival))
             events = sorted(events, key=lambda e: e[EVENT_TIME])
@@ -75,7 +75,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
             if queue_size == 1:
                 # Next departure
                 if DEBUG: print("Add next departure.")
-                service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
+                service_duration = exponential_generator(seed = random.randint(0, 9999999999999999999999), lambd = service_rate)  # X
                 service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
@@ -96,7 +96,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
             # Queue is not empty -> add next departure
             if queue_size > 0:
                 # Next departure
-                service_duration = exponential_generator(seed=random.randint(0, 9999999999999999999999), lambd=service_rate)  # X
+                service_duration = exponential_generator(seed = random.randint(0, 9999999999999999999999), lambd = service_rate)  # X
                 service_durations.append(service_duration)
                 if DEBUG: print(f"service duration: {service_duration}")
                 events.append((DEPARTURE, current_time + service_duration))
@@ -123,7 +123,7 @@ def restaurant_simulator(simulation_time, arrival_rate, service_rate, queue_capa
     requisition_times = []
     for i in range(len(departure_times)):
         requisition_times.append(departure_times[i] - arrival_times[i])
-        
+
     avg_requisition_time = sum(requisition_times) / float(len(requisition_times))
 
     # Drop rate
